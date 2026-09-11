@@ -39,7 +39,8 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     CityListScreen(
                         cities = cityRepository.cities,
-                        onAddCity = { cityRepository.addCity(it)},
+                        onAddCity = { cityRepository.addCity(it) },
+                        onDeleteCity = { cityRepository.deleteCity(it) },
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
@@ -76,6 +77,10 @@ class CityRepository {
         _cities.add(city)
     }
 
+    fun deleteCity(city: String) {
+        _cities.remove(city)
+    }
+
 
 
 }
@@ -84,6 +89,7 @@ class CityRepository {
 fun CityListScreen(
     cities: List<String>,
     onAddCity: (String) -> Unit,
+    onDeleteCity: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var newCityName by remember { mutableStateOf( value = "") }
@@ -114,7 +120,7 @@ fun CityListScreen(
 
         LazyColumn(modifier = modifier.fillMaxSize()) {
             items(cities) { city ->
-                CityRow(city = city)
+                CityRow(city = city, onDeleteCity = onDeleteCity)
             }
         }
 
@@ -125,11 +131,20 @@ fun CityListScreen(
 }
 
 @Composable
-fun CityRow(city: String) {
-    Text(
-        text = city,
-        fontSize = 28.sp,
+fun CityRow(city: String, onDeleteCity: (String) -> Unit) {
+    Row(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 18.dp, vertical = 14.dp)
-    )
+    ) {
+        Text(
+            text = city,
+            fontSize = 28.sp,
+            modifier = Modifier.weight(1f)
+        )
+        Button(onClick = { onDeleteCity(city) }) {
+            Text("Delete")
+        }
+
+    }
+
 }
 
